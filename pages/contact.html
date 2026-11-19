@@ -1,0 +1,228 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contact Us | Awach Foundation</title>
+    <link rel="stylesheet" href="../style.css">
+</head>
+<body>
+
+<header class="site-header">
+    <div class="container header-container">
+        <a href="../index.html" class="logo">
+            <span class="logo-icon">A</span>
+            <span>AWACH <small>FOUNDATION</small></span>
+        </a>
+
+        <button class="menu-btn" id="menuBtn" aria-label="Toggle navigation" aria-expanded="false">☰</button>
+
+        <nav class="nav-links" id="navLinks">
+            <a href="../index.html">Home</a>
+            <a href="about.html">About Us</a>
+            <a href="programs.html">Programs</a>
+            <a href="projects.html">Projects</a>
+            <a href="news.html">News & Events</a>
+            <a href="gallery.html">Gallery</a>
+            <a href="resources.html">Resources</a>
+            <a href="get-involved.html">Get Involved</a>
+            <a href="contact.html">Contact Us</a>
+        </nav>
+    </div>
+</header>
+
+<main>
+
+    <!-- PAGE HERO -->
+    <section class="inner-page-hero">
+        <div class="container">
+            <p class="page-breadcrumb">
+                <a href="../index.html">Home</a> / Contact Us
+            </p>
+            <span class="section-tag">LET'S CONNECT</span>
+            <h1>We'd Love to Hear From You</h1>
+            <p>
+                Have a question, an idea, or an opportunity to collaborate?
+                Get in touch with Awach Foundation. We'd be happy to hear from you.
+            </p>
+        </div>
+    </section>
+
+    <!-- CONTACT INTRO -->
+    <section class="contact-intro section">
+        <div class="container">
+            <span class="section-tag">CONTACT AWACH FOUNDATION</span>
+            <h2>Let's Start a Conversation</h2>
+            <p>
+                Whether you're interested in our initiatives, exploring
+                partnerships, volunteering, or simply learning more about
+                our work, we're here to connect.
+            </p>
+        </div>
+    </section>
+
+    <!-- CONTACT CONTENT -->
+    <section class="contact-section section">
+        <div class="container contact-layout">
+
+            <!-- CONTACT INFORMATION -->
+            <div class="contact-information">
+                <h2>Get in Touch</h2>
+                <p>
+                    Reach out to us through the contact channels below.
+                    Our official details will be added here.
+                </p>
+
+                <div class="contact-detail">
+                    <div class="contact-detail-icon">📍</div>
+                    <div>
+                        <h3>Our Location</h3>
+                        <p>[Add official office address]</p>
+                    </div>
+                </div>
+
+                <div class="contact-detail">
+                    <div class="contact-detail-icon">✉️</div>
+                    <div>
+                        <h3>Email Address</h3>
+                        <p>[Add official email address]</p>
+                    </div>
+                </div>
+
+                <div class="contact-detail">
+                    <div class="contact-detail-icon">📞</div>
+                    <div>
+                        <h3>Phone Number</h3>
+                        <p>[Add official phone number]</p>
+                    </div>
+                </div>
+
+                <div class="contact-detail">
+                    <div class="contact-detail-icon">🕒</div>
+                    <div>
+                        <h3>Working Hours</h3>
+                        <p>[Add official working days and hours]</p>
+                    </div>
+                </div>
+
+                <div class="contact-social">
+                    <h3>Connect With Us</h3>
+                    <p>Follow our official social media channels.</p>
+                    <div class="social-links">
+                        <a href="#" aria-label="Facebook">f</a>
+                        <a href="#" aria-label="Instagram">◎</a>
+                        <a href="#" aria-label="LinkedIn">in</a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- CONTACT FORM -->
+            <div class="contact-form-card">
+                <span class="section-tag">SEND US A MESSAGE</span>
+                <h2>Write to Us</h2>
+                <p>Fill in the details below to prepare your inquiry.</p>
+
+                <form id="contactForm">
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="fullName">Full Name *</label>
+                            <input type="text" id="fullName" name="fullName"
+                                   placeholder="Enter your full name" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="email">Email Address *</label>
+                            <input type="email" id="email" name="email"
+                                   placeholder="Enter your email" required>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="subject">Subject *</label>
+                        <select id="subject" name="subject" required>
+                            <option value="">Select an inquiry type</option>
+                            <option value="General Inquiry">General Inquiry</option>
+                            <option value="Partnership">Partnership Opportunity</option>
+                            <option value="Volunteering">Volunteering</option>
+                            <option value="Programs and Projects">Programs and Projects</option>
+                            <option value="Other">Other</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="message">Your Message *</label>
+                        <textarea id="message" name="message" rows="6"
+                                  placeholder="Write your message here..."
+                                  required></textarea>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary contact-submit">
+                        Prepare Message →
+                    </button>
+
+                    <p class="form-note">
+                        This demonstration form will prepare an email.
+                        It will not send anything until the official email
+                        address is configured.
+                    </p>
+
+                    <p id="formFeedback" class="form-feedback" aria-live="polite"></p>
+
+                </form>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- LOCATION SECTION -->
+    <section class="contact-location section">
+        <div class="container">
+            <div class="location-content">
+                <span class="section-tag">FIND US</span>
+                <h2>Our Office Location</h2>
+                <p>
+                    Our official office location and map will be displayed here.
+                </p>
+                <div class="map-placeholder">
+                    <span>📍</span>
+                    <h3>Office Location</h3>
+                    <p>Official location map coming soon.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA -->
+    <section class="inner-page-cta">
+        <div class="container">
+            <h2>Let's Create Positive Change Together</h2>
+            <p>
+                Every meaningful connection can be the beginning
+                of something impactful.
+            </p>
+            <a href="get-involved.html" class="btn btn-light">
+                Explore Ways to Get Involved
+            </a>
+        </div>
+    </section>
+
+</main>
+
+<footer class="site-footer">
+    <div class="container footer-content">
+        <div>
+            <a href="../index.html" class="logo footer-logo">
+                <span class="logo-icon">A</span>
+                <span>AWACH <small>FOUNDATION</small></span>
+            </a>
+            <p>Empowering People. Transforming Communities.</p>
+        </div>
+        <p>© <span id="year"></span> Awach Foundation. All rights reserved.</p>
+    </div>
+</footer>
+
+<script src="../script.js"></script>
+</body>
+</html>

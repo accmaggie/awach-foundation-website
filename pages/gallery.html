@@ -1,0 +1,187 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Explore photos and activities featured by Awach Foundation.">
+    <title>Gallery | Awach Foundation</title>
+    <link rel="stylesheet" href="../style.css">
+</head>
+<body>
+
+    <!-- HEADER -->
+    <header class="site-header">
+        <div class="container header-container">
+            <a href="../index.html" class="logo">
+                <span class="logo-icon">A</span>
+                <span>AWACH <small>FOUNDATION</small></span>
+            </a>
+
+            <button class="menu-btn" id="menuBtn"
+                aria-label="Toggle navigation" aria-expanded="false">☰</button>
+
+            <nav class="nav-links" id="navLinks">
+                <a href="../index.html">Home</a>
+                <a href="about.html">About Us</a>
+                <a href="programs.html">Programs</a>
+                <a href="projects.html">Projects</a>
+                <a href="news.html">News & Events</a>
+                <a href="gallery.html">Gallery</a>
+                <a href="resources.html">Resources</a>
+                <a href="get-involved.html">Get Involved</a>
+                <a href="contact.html">Contact Us</a>
+            </nav>
+        </div>
+    </header>
+
+    <!-- HERO -->
+    <section class="inner-page-hero">
+        <div class="container">
+            <p class="section-label">MOMENTS THAT MATTER</p>
+            <h1>Our Gallery</h1>
+            <p>
+                Explore photographs and moments from activities,
+                initiatives, and community experiences.
+            </p>
+            <div class="page-breadcrumb">
+                <a href="../index.html">Home</a>
+                <span>/</span>
+                <span>Gallery</span>
+            </div>
+        </div>
+    </section>
+
+    <!-- INTRODUCTION -->
+    <section class="section gallery-intro">
+        <div class="container">
+            <p class="section-label">OUR PHOTO COLLECTION</p>
+            <h2>Stories Told Through Pictures</h2>
+            <p>
+                Every photograph can tell a story. This gallery will
+                showcase verified moments, activities, events, and
+                experiences connected with Awach Foundation.
+            </p>
+        </div>
+    </section>
+
+    <!-- FILTER BUTTONS -->
+    <section class="section gallery-section">
+        <div class="container">
+
+            <div class="gallery-filters">
+                <button class="gallery-filter active" data-filter="all">All Photos</button>
+                <button class="gallery-filter" data-filter="projects">Projects</button>
+                <button class="gallery-filter" data-filter="community">Community</button>
+                <button class="gallery-filter" data-filter="events">Events</button>
+            </div>
+
+            <!-- GALLERY GRID -->
+            <div class="gallery-grid">
+
+                <div class="gallery-item" data-category="projects">
+                    <img src="../images/gallery/photo-1.jpg"
+                         alt="Project activity photograph"
+                         onerror="this.parentElement.classList.add('gallery-placeholder'); this.style.display='none';">
+                    <div class="gallery-overlay">
+                        <span>PROJECTS</span>
+                        <h3>Project Activities</h3>
+                        <button class="gallery-view" type="button">View Photo ↗</button>
+                    </div>
+                </div>
+
+                <div class="gallery-item" data-category="community">
+                    <img src="../images/gallery/photo-2.jpg"
+                         alt="Community activity photograph"
+                         onerror="this.parentElement.classList.add('gallery-placeholder'); this.style.display='none';">
+                    <div class="gallery-overlay">
+                        <span>COMMUNITY</span>
+                        <h3>Community Engagement</h3>
+                        <button class="gallery-view" type="button">View Photo ↗</button>
+                    </div>
+                </div>
+
+                <div class="gallery-item" data-category="events">
+                    <img src="../images/gallery/photo-3.jpg"
+                         alt="Event photograph"
+                         onerror="this.parentElement.classList.add('gallery-placeholder'); this.style.display='none';">
+                    <div class="gallery-overlay">
+                        <span>EVENTS</span>
+                        <h3>Events and Activities</h3>
+                        <button class="gallery-view" type="button">View Photo ↗</button>
+                    </div>
+                </div>
+
+                <div class="gallery-item" data-category="projects">
+                    <img src="../images/gallery/photo-4.jpg"
+                         alt="Youth project photograph"
+                         onerror="this.parentElement.classList.add('gallery-placeholder'); this.style.display='none';">
+                    <div class="gallery-overlay">
+                        <span>PROJECTS</span>
+                        <h3>Youth Initiatives</h3>
+                        <button class="gallery-view" type="button">View Photo ↗</button>
+                    </div>
+                </div>
+
+                <div class="gallery-item" data-category="community">
+                    <img src="../images/gallery/photo-5.jpg"
+                         alt="Community participation photograph"
+                         onerror="this.parentElement.classList.add('gallery-placeholder'); this.style.display='none';">
+                    <div class="gallery-overlay">
+                        <span>COMMUNITY</span>
+                        <h3>Community Participation</h3>
+                        <button class="gallery-view" type="button">View Photo ↗</button>
+                    </div>
+                </div>
+
+                <div class="gallery-item" data-category="events">
+                    <img src="../images/gallery/photo-6.jpg"
+                         alt="Foundation event photograph"
+                         onerror="this.parentElement.classList.add('gallery-placeholder'); this.style.display='none';">
+                    <div class="gallery-overlay">
+                        <span>EVENTS</span>
+                        <h3>Special Moments</h3>
+                        <button class="gallery-view" type="button">View Photo ↗</button>
+                    </div>
+                </div>
+
+            </div>
+
+            <p class="gallery-note">
+                Placeholder gallery items — replace with authentic,
+                approved Foundation photographs before publication.
+            </p>
+        </div>
+    </section>
+
+    <!-- PHOTO VIEWER -->
+    <div class="gallery-lightbox" id="galleryLightbox" aria-hidden="true">
+        <button class="lightbox-close" id="lightboxClose"
+            aria-label="Close photo viewer">×</button>
+        <img id="lightboxImage" src="" alt="Enlarged gallery photograph">
+        <p id="lightboxCaption"></p>
+    </div>
+
+    <!-- CTA -->
+    <section class="inner-page-cta">
+        <div class="container">
+            <h2>Have Photos to Share?</h2>
+            <p>
+                Get in touch with us to share approved photographs
+                and stories from Foundation activities.
+            </p>
+            <a href="contact.html" class="btn btn-primary">Contact Us</a>
+        </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer class="site-footer">
+        <div class="container footer-bottom">
+            <p>© <span id="year"></span> Awach Foundation. All rights reserved.</p>
+            <p>Empowering People. Transforming Communities.</p>
+        </div>
+    </footer>
+
+    <script src="../script.js"></script>
+</body>
+</html>
