@@ -7,30 +7,68 @@
 
 const fs = require("fs");
 const path = require("path");
+const os = require("os");
 
-const DATA_DIR = path.join(__dirname, "..", "data");
-const CONTACTS_FILE = path.join(DATA_DIR, "contacts.json");
-const SUBSCRIBERS_FILE = path.join(DATA_DIR, "subscribers.json");
+// Safely determine writable storage directory (supports local dev & Vercel serverless)
+function getStorageDir() {
+    if (process.env.VERCEL || process.env.AWS_LAMBDA_FUNCTION_NAME) {
+        const tmpDir = path.join(os.tmpdir(), "awach-data");
+        try {
+            if (!fs.existsSync(tmpDir)) fs.mkdirSync(tmpDir, { recursive: true });
+            return tmpDir;
+        } catch (e) {
+            return os.tmpdir();
+        }
+    }
+
+    const localDir = path.join(__dirname, "..", "data");
+    try {
+        if (!fs.existsSync(localDir)) {
+            fs.mkdirSync(localDir, { recursive: true });
+        }
+        return localDir;
+    } catch (err) {
+        const tmpFallback = path.join(os.tmpdir(), "awach-data");
+        try {
+            if (!fs.existsSync(tmpFallback)) fs.mkdirSync(tmpFallback, { recursive: true });
+            return tmpFallback;
+        } catch (e) {
+            return os.tmpdir();
+        }
+    }
+}
+
+function getContactsFile() {
+    return path.join(getStorageDir(), "contacts.json");
+}
+
+function getSubscribersFile() {
+    return path.join(getStorageDir(), "subscribers.json");
+}
 
 // Ensure data directory and files exist
 function ensureDataFiles() {
-    if (!fs.existsSync(DATA_DIR)) {
-        fs.mkdirSync(DATA_DIR, { recursive: true });
-    }
+    try {
+        const contactsFile = getContactsFile();
+        const subscribersFile = getSubscribersFile();
 
-    if (!fs.existsSync(CONTACTS_FILE)) {
-        fs.writeFileSync(CONTACTS_FILE, JSON.stringify([], null, 2), "utf8");
-    }
+        if (!fs.existsSync(contactsFile)) {
+            fs.writeFileSync(contactsFile, JSON.stringify([], null, 2), "utf8");
+        }
 
-    if (!fs.existsSync(SUBSCRIBERS_FILE)) {
-        fs.writeFileSync(SUBSCRIBERS_FILE, JSON.stringify([], null, 2), "utf8");
+        if (!fs.existsSync(subscribersFile)) {
+            fs.writeFileSync(subscribersFile, JSON.stringify([], null, 2), "utf8");
+        }
+    } catch (err) {
+        console.warn("[DB] ensureDataFiles notice:", err.message);
     }
 }
 
 // Read JSON helper
 function readJSON(filePath) {
-    ensureDataFiles();
     try {
+        ensureDataFiles();
+        if (!fs.existsSync(filePath)) return [];
         const raw = fs.readFileSync(filePath, "utf8");
         return JSON.parse(raw);
     } catch (err) {
@@ -41,8 +79,8 @@ function readJSON(filePath) {
 
 // Write JSON helper
 function writeJSON(filePath, data) {
-    ensureDataFiles();
     try {
+        ensureDataFiles();
         fs.writeFileSync(filePath, JSON.stringify(data, null, 2), "utf8");
         return true;
     } catch (err) {
@@ -61,7 +99,7 @@ function generateId(prefix = "item") {
 // ==========================================
 
 function saveContact({ fullName, email, subject, message, ip = "" }) {
-    const contacts = readJSON(CONTACTS_FILE);
+    const contacts = readJSON(getContactsFile());
     const newContact = {
         id: generateId("contact"),
         fullName: String(fullName || "").trim(),
@@ -74,12 +112,12 @@ function saveContact({ fullName, email, subject, message, ip = "" }) {
     };
 
     contacts.unshift(newContact);
-    writeJSON(CONTACTS_FILE, contacts);
+    writeJSON(getContactsFile(), contacts);
     return newContact;
 }
 
 function getContacts({ status, search } = {}) {
-    let contacts = readJSON(CONTACTS_FILE);
+    let contacts = readJSON(getContactsFile());
 
     if (status && status !== "all") {
         contacts = contacts.filter(c => c.status === status);
@@ -99,7 +137,7 @@ function getContacts({ status, search } = {}) {
 }
 
 function getContactById(id) {
-    const contacts = readJSON(CONTACTS_FILE);
+    const contacts = readJSON(getContactsFile());
     return contacts.find(c => c.id === id) || null;
 }
 
@@ -109,22 +147,22 @@ function updateContactStatus(id, newStatus) {
         throw new Error(`Invalid status. Must be one of: ${allowed.join(", ")}`);
     }
 
-    const contacts = readJSON(CONTACTS_FILE);
+    const contacts = readJSON(getContactsFile());
     const index = contacts.findIndex(c => c.id === id);
     if (index === -1) return null;
 
     contacts[index].status = newStatus;
     contacts[index].updatedAt = new Date().toISOString();
-    writeJSON(CONTACTS_FILE, contacts);
+    writeJSON(getContactsFile(), contacts);
     return contacts[index];
 }
 
 function deleteContact(id) {
-    let contacts = readJSON(CONTACTS_FILE);
+    let contacts = readJSON(getContactsFile());
     const beforeCount = contacts.length;
     contacts = contacts.filter(c => c.id !== id);
     if (contacts.length !== beforeCount) {
-        writeJSON(CONTACTS_FILE, contacts);
+        writeJSON(getContactsFile(), contacts);
         return true;
     }
     return false;
@@ -135,7 +173,7 @@ function deleteContact(id) {
 // ==========================================
 
 function saveSubscriber(email, source = "website_footer") {
-    const subscribers = readJSON(SUBSCRIBERS_FILE);
+    const subscribers = readJSON(getSubscribersFile());
     const cleanEmail = String(email || "").trim().toLowerCase();
 
     const existing = subscribers.find(s => s.email === cleanEmail);
@@ -152,12 +190,12 @@ function saveSubscriber(email, source = "website_footer") {
     };
 
     subscribers.unshift(newSubscriber);
-    writeJSON(SUBSCRIBERS_FILE, subscribers);
+    writeJSON(getSubscribersFile(), subscribers);
     return { isNew: true, subscriber: newSubscriber };
 }
 
 function getSubscribers() {
-    return readJSON(SUBSCRIBERS_FILE);
+    return readJSON(getSubscribersFile());
 }
 
 // ==========================================
@@ -165,8 +203,8 @@ function getSubscribers() {
 // ==========================================
 
 function getStats() {
-    const contacts = readJSON(CONTACTS_FILE);
-    const subscribers = readJSON(SUBSCRIBERS_FILE);
+    const contacts = readJSON(getContactsFile());
+    const subscribers = readJSON(getSubscribersFile());
 
     return {
         totalContacts: contacts.length,

@@ -155,6 +155,25 @@
             document.body.appendChild(overlay);
         }
 
+        // Add a clean drawer header with brand & close button inside mobile drawer
+        if (!navLinks.querySelector(".mobile-drawer-header")) {
+            const drawerHeader = document.createElement("div");
+            drawerHeader.className = "mobile-drawer-header";
+            drawerHeader.innerHTML = `
+                <div class="mobile-drawer-brand">
+                    <span class="logo-mark">A</span>
+                    <span class="mobile-drawer-title">AWACH FOUNDATION</span>
+                </div>
+                <button type="button" class="mobile-drawer-close" aria-label="Close navigation menu">✕</button>
+            `;
+            navLinks.prepend(drawerHeader);
+
+            const closeBtn = drawerHeader.querySelector(".mobile-drawer-close");
+            if (closeBtn) {
+                closeBtn.addEventListener("click", () => toggleMenu(true));
+            }
+        }
+
         function toggleMenu(forceClose = false) {
             const isOpen = forceClose ? false : !navLinks.classList.contains("active");
             navLinks.classList.toggle("active", isOpen);
@@ -163,13 +182,22 @@
             overlay.classList.toggle("active", isOpen);
             document.body.classList.toggle("mobile-menu-open", isOpen);
 
+            if (isOpen) {
+                document.body.style.overflow = "hidden";
+            } else {
+                document.body.style.overflow = "";
+            }
+
             const iconSpan = menuBtn.querySelector(".menu-icon-bars") || menuBtn;
             if (iconSpan) {
                 iconSpan.textContent = isOpen ? "✕" : "☰";
             }
         }
 
-        menuBtn.addEventListener("click", () => toggleMenu());
+        menuBtn.addEventListener("click", (e) => {
+            e.stopPropagation();
+            toggleMenu();
+        });
         overlay.addEventListener("click", () => toggleMenu(true));
 
         // Close on link click
@@ -894,37 +922,56 @@
                     body: JSON.stringify({ fullName, email, subject, message })
                 });
 
-                const data = await response.json();
+                let data = {};
+                try {
+                    data = await response.json();
+                } catch (parseErr) {
+                    data = { success: response.ok, message: "Response received from server." };
+                }
 
                 if (response.ok && data.success) {
                     contactForm.reset();
                     if (feedback) {
-                        feedback.textContent = `✓ ${data.message}`;
+                        feedback.textContent = `✓ ${data.message || "Thank you! Your message has been sent successfully."}`;
                         feedback.className = "form-feedback success";
                     }
                     showToast("Message sent! A confirmation email has been dispatched to your inbox.", "success", 5000);
                 } else {
-                    throw new Error(data.error || "Submission failed");
+                    throw new Error(data.error || "Submission failed. Please try again.");
                 }
 
             } catch (err) {
-                console.warn("[Contact Form] Backend API unreachable, falling back to mailto client:", err.message);
+                console.warn("[Contact Form] API submission issue:", err.message);
 
-                if (feedback) {
-                    feedback.textContent = "Notice: Backend server is offline or unreachable. Opening your email app to prepare the message...";
-                    feedback.className = "form-feedback info";
-                }
-                showToast("Backend offline. Opening email app...", "info", 3500);
-
-                const foundationEmail = "info@awachfoundation.org";
+                const foundationEmail = "accmaggie0@gmail.com";
+                const phoneContact = "+251 11 869 9000";
                 const emailSubject = encodeURIComponent(`[Awach Foundation Inquiry] ${subject} - ${fullName}`);
                 const emailBody = encodeURIComponent(
                     `Full Name: ${fullName}\nEmail Address: ${email}\nInquiry Type: ${subject}\n\nMessage:\n${message}\n\nSent via Awach Foundation Website.`
                 );
 
-                setTimeout(() => {
-                    window.location.href = `mailto:${foundationEmail}?subject=${emailSubject}&body=${emailBody}`;
-                }, 800);
+                if (feedback) {
+                    feedback.innerHTML = `
+                        <div style="text-align: left; padding: 12px 14px; background: rgba(220, 53, 69, 0.08); border-radius: 8px; border: 1px solid rgba(220, 53, 69, 0.25);">
+                            <strong style="color: #c62828;">Notice:</strong>
+                            <p style="margin: 4px 0 10px; font-size: 13.5px; color: #444;">
+                                ${err.message || "Unable to reach server directly."} You can send your message directly to our official inbox:
+                            </p>
+                            <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+                                <a href="mailto:${foundationEmail}?subject=${emailSubject}&body=${emailBody}" 
+                                   style="background: #438c98; color: #fff; padding: 8px 16px; border-radius: 20px; text-decoration: none; font-size: 13px; font-weight: 600; display: inline-flex; align-items: center; gap: 5px;">
+                                    ✉️ Email to ${foundationEmail}
+                                </a>
+                                <a href="tel:+251118699000" 
+                                   style="background: #273b43; color: #fff; padding: 8px 16px; border-radius: 20px; text-decoration: none; font-size: 13px; font-weight: 600; display: inline-flex; align-items: center; gap: 5px;">
+                                    📞 Call ${phoneContact}
+                                </a>
+                            </div>
+                        </div>
+                    `;
+                    feedback.className = "form-feedback warning";
+                }
+                showToast("Notice: You can send directly to accmaggie0@gmail.com", "info", 5000);
 
             } finally {
                 if (submitBtn) {

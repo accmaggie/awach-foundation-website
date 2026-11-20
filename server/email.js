@@ -72,10 +72,9 @@ async function initTransporter() {
 // Log email for development inspection
 function logEmailToFile(mailOptions) {
     try {
-        const dataDir = path.join(__dirname, "..", "data");
-        if (!fs.existsSync(dataDir)) fs.mkdirSync(dataDir, { recursive: true });
-
-        const logEntry = `
+        const localDataDir = path.join(__dirname, "..", "data");
+        if (fs.existsSync(localDataDir)) {
+            const logEntry = `
 ================================================================================
 TIME:    ${new Date().toISOString()}
 TO:      ${mailOptions.to}
@@ -87,20 +86,22 @@ TEXT CONTENT:
 ${mailOptions.text || "(HTML only)"}
 ================================================================================
 `;
-        fs.appendFileSync(LOG_FILE, logEntry, "utf8");
+            fs.appendFileSync(LOG_FILE, logEntry, "utf8");
+        }
     } catch (err) {
-        console.error("[EmailService] Failed to write to sent_emails.log:", err.message);
+        // Safe logging in read-only environments
     }
 }
 
 // Get default sender address
 function getSenderAddress() {
-    return process.env.FROM_EMAIL || '"Awach Foundation" <info@awachfoundation.org>';
+    const defaultUser = (process.env.SMTP_USER || "accmaggie0@gmail.com").trim();
+    return process.env.FROM_EMAIL || `"Awach Foundation" <${defaultUser}>`;
 }
 
 // Get admin notification address
 function getAdminAddress() {
-    return process.env.ADMIN_EMAIL || "info@awachfoundation.org";
+    return (process.env.ADMIN_EMAIL || process.env.SMTP_USER || "accmaggie0@gmail.com").trim();
 }
 
 // ==========================================================================
@@ -158,7 +159,7 @@ async function sendContactConfirmation({ to, fullName, subject, message }) {
     <!-- FOOTER -->
     <div style="background-color: #1c2b30; color: #b5c7cb; padding: 22px 25px; font-size: 12px; text-align: center; line-height: 1.6;">
       <p style="margin: 0 0 6px 0; color: #b5c7cb;">
-        📍 Addis Ababa, Ethiopia &nbsp;|&nbsp; 📞 +251 11 869 9000 &nbsp;|&nbsp; ✉️ <a href="mailto:info@awachfoundation.org" style="color: #9bcb4b; text-decoration: none;">info@awachfoundation.org</a>
+        📍 Addis Ababa, Ethiopia &nbsp;|&nbsp; 📞 +251 11 869 9000 &nbsp;|&nbsp; ✉️ <a href="mailto:accmaggie0@gmail.com" style="color: #9bcb4b; text-decoration: none;">accmaggie0@gmail.com</a>
       </p>
       <p style="margin: 0; color: #738a90;">&copy; ${new Date().getFullYear()} Awach Foundation. All rights reserved.</p>
     </div>
@@ -172,7 +173,7 @@ async function sendContactConfirmation({ to, fullName, subject, message }) {
         from: from,
         to: to,
         subject: `Thank you for contacting Awach Foundation: "${subject}"`,
-        text: `Dear ${fullName},\n\nThank you for reaching out to Awach Foundation. We have received your message regarding "${subject}" and our team will get back to you shortly.\n\nYour message:\n${message}\n\nWarm regards,\nAwach Foundation Team\nAddis Ababa, Ethiopia\n+251 11 869 9000 | info@awachfoundation.org`,
+        text: `Dear ${fullName},\n\nThank you for reaching out to Awach Foundation. We have received your message regarding "${subject}" and our team will get back to you shortly.\n\nYour message:\n${message}\n\nWarm regards,\nAwach Foundation Team\nAddis Ababa, Ethiopia\n+251 11 869 9000 | accmaggie0@gmail.com`,
         html: htmlContent
     };
 
@@ -272,7 +273,7 @@ async function sendContactAdminAlert({ fromEmail, fullName, subject, message, co
     <!-- FOOTER -->
     <div style="background-color: #1c2b30; color: #b5c7cb; padding: 22px 25px; font-size: 12px; text-align: center; line-height: 1.6;">
       <p style="margin: 0 0 6px 0; color: #b5c7cb;">
-        📍 Addis Ababa, Ethiopia &nbsp;|&nbsp; 📞 +251 11 869 9000 &nbsp;|&nbsp; ✉️ <a href="mailto:info@awachfoundation.org" style="color: #9bcb4b; text-decoration: none;">info@awachfoundation.org</a>
+        📍 Addis Ababa, Ethiopia &nbsp;|&nbsp; 📞 +251 11 869 9000 &nbsp;|&nbsp; ✉️ <a href="mailto:accmaggie0@gmail.com" style="color: #9bcb4b; text-decoration: none;">accmaggie0@gmail.com</a>
       </p>
       <p style="margin: 0; color: #738a90;">&copy; ${new Date().getFullYear()} Awach Foundation. All rights reserved.</p>
     </div>
@@ -356,7 +357,7 @@ async function sendNewsletterWelcome({ to }) {
     <!-- FOOTER -->
     <div style="background-color: #1c2b30; color: #b5c7cb; padding: 22px 25px; font-size: 12px; text-align: center; line-height: 1.6;">
       <p style="margin: 0 0 6px 0; color: #b5c7cb;">
-        📍 Addis Ababa, Ethiopia &nbsp;|&nbsp; 📞 +251 11 869 9000 &nbsp;|&nbsp; ✉️ <a href="mailto:info@awachfoundation.org" style="color: #9bcb4b; text-decoration: none;">info@awachfoundation.org</a>
+        📍 Addis Ababa, Ethiopia &nbsp;|&nbsp; 📞 +251 11 869 9000 &nbsp;|&nbsp; ✉️ <a href="mailto:accmaggie0@gmail.com" style="color: #9bcb4b; text-decoration: none;">accmaggie0@gmail.com</a>
       </p>
       <p style="margin: 0; color: #738a90;">&copy; ${new Date().getFullYear()} Awach Foundation. All rights reserved.</p>
     </div>
@@ -410,6 +411,7 @@ module.exports = {
     initTransporter,
     sendContactConfirmation,
     sendContactAdminAlert,
+    sendAdminAlert: sendContactAdminAlert,
     sendNewsletterWelcome,
     getEmailStatus
 };
