@@ -473,15 +473,16 @@
     }
 
     // --------------------------------------------------------------------------
-    // 6. NEWSLETTER SUBSCRIPTION ENGINE
+    // 6. NEWSLETTER SUBSCRIPTION ENGINE (Connected to Backend API)
     // --------------------------------------------------------------------------
     function initNewsletter() {
         const form = document.getElementById("newsletterForm");
         if (!form) return;
 
-        form.addEventListener("submit", function (e) {
+        form.addEventListener("submit", async function (e) {
             e.preventDefault();
             const input = document.getElementById("newsletterEmail");
+            const submitBtn = form.querySelector("button[type='submit']");
             const feedback = document.getElementById("newsletterFeedback");
             if (!input) return;
 
@@ -498,36 +499,80 @@
                 return;
             }
 
-            // Retrieve existing subscriptions
-            let subscribers = [];
+            const originalBtnText = submitBtn ? submitBtn.textContent : "Subscribe";
+            if (submitBtn) {
+                submitBtn.disabled = true;
+                submitBtn.textContent = "...";
+            }
+
             try {
-                subscribers = JSON.parse(localStorage.getItem("awach_newsletter_subscribers") || "[]");
-            } catch (err) {
-                subscribers = [];
-            }
+                // Call Backend API
+                const response = await fetch("/api/newsletter", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ email })
+                });
 
-            if (subscribers.includes(email.toLowerCase())) {
-                if (feedback) {
-                    feedback.textContent = "This email is already subscribed to our newsletter!";
-                    feedback.className = "newsletter-feedback info";
+                const data = await response.json();
+
+                if (response.ok && data.success) {
+                    input.value = "";
+                    if (feedback) {
+                        feedback.textContent = data.message;
+                        feedback.className = "newsletter-feedback success";
+                    }
+                    showToast(data.message, "success", 4500);
+
+                    // Also cache locally
+                    try {
+                        let subs = JSON.parse(localStorage.getItem("awach_newsletter_subscribers") || "[]");
+                        if (!subs.includes(email.toLowerCase())) {
+                            subs.push(email.toLowerCase());
+                            localStorage.setItem("awach_newsletter_subscribers", JSON.stringify(subs));
+                        }
+                    } catch (err) {}
+
+                } else {
+                    throw new Error(data.error || "Subscription failed");
                 }
-                showToast("You are already subscribed with this email.", "info");
-                return;
+
+            } catch (err) {
+                // Local fallback if offline
+                let subscribers = [];
+                try {
+                    subscribers = JSON.parse(localStorage.getItem("awach_newsletter_subscribers") || "[]");
+                } catch (e) {
+                    subscribers = [];
+                }
+
+                if (subscribers.includes(email.toLowerCase())) {
+                    if (feedback) {
+                        feedback.textContent = "This email is already subscribed to our newsletter!";
+                        feedback.className = "newsletter-feedback info";
+                    }
+                    showToast("You are already subscribed with this email.", "info");
+                } else {
+                    subscribers.push(email.toLowerCase());
+                    localStorage.setItem("awach_newsletter_subscribers", JSON.stringify(subscribers));
+                    input.value = "";
+                    if (feedback) {
+                        feedback.textContent = "Thank you! You have subscribed to Awach Foundation updates.";
+                        feedback.className = "newsletter-feedback success";
+                    }
+                    showToast("Thank you for subscribing to Awach Foundation updates!", "success");
+                }
+
+            } finally {
+                if (submitBtn) {
+                    submitBtn.disabled = false;
+                    submitBtn.textContent = originalBtnText;
+                }
+                setTimeout(() => {
+                    if (feedback && feedback.classList.contains("success")) {
+                        feedback.textContent = "";
+                    }
+                }, 7000);
             }
-
-            subscribers.push(email.toLowerCase());
-            localStorage.setItem("awach_newsletter_subscribers", JSON.stringify(subscribers));
-
-            input.value = "";
-            if (feedback) {
-                feedback.textContent = "Thank you! You have successfully subscribed to Awach Foundation updates.";
-                feedback.className = "newsletter-feedback success";
-            }
-            showToast("Thank you for subscribing to Awach Foundation updates!", "success");
-
-            setTimeout(() => {
-                if (feedback) feedback.textContent = "";
-            }, 6000);
         });
     }
 
@@ -787,43 +832,106 @@
     }
 
     // --------------------------------------------------------------------------
-    // 13. CONTACT FORM HANDLER
+    // 13. CONTACT FORM HANDLER (Connected to Backend API with confirmation email)
     // --------------------------------------------------------------------------
     function initContactForm() {
         const contactForm = document.getElementById("contactForm");
         if (!contactForm) return;
 
-        contactForm.addEventListener("submit", function (event) {
+        contactForm.addEventListener("submit", async function (event) {
             event.preventDefault();
 
-            const fullName = document.getElementById("fullName")?.value.trim() || "";
-            const email = document.getElementById("email")?.value.trim() || "";
-            const subject = document.getElementById("subject")?.value || "";
-            const message = document.getElementById("message")?.value.trim() || "";
+            const fullNameInput = document.getElementById("fullName");
+            const emailInput = document.getElementById("email");
+            const subjectInput = document.getElementById("subject");
+            const messageInput = document.getElementById("message");
+            const submitBtn = contactForm.querySelector("button[type='submit']");
             const feedback = document.getElementById("formFeedback");
 
+            const fullName = fullNameInput?.value.trim() || "";
+            const email = emailInput?.value.trim() || "";
+            const subject = subjectInput?.value || "";
+            const message = messageInput?.value.trim() || "";
+
             if (!fullName || !email || !subject || !message) {
-                if (feedback) feedback.textContent = "Please complete all required fields.";
+                if (feedback) {
+                    feedback.textContent = "Please complete all required fields.";
+                    feedback.className = "form-feedback error";
+                }
                 showToast("Please fill in all required fields.", "error");
                 return;
             }
 
-            // Foundation Official Contact Email
-            const foundationEmail = "info@awachfoundation.org";
-            const emailSubject = encodeURIComponent(`[Awach Foundation Inquiry] ${subject} - ${fullName}`);
-            const emailBody = encodeURIComponent(
-                `Full Name: ${fullName}\nEmail Address: ${email}\nInquiry Type: ${subject}\n\nMessage:\n${message}\n\nSent via Awach Foundation Website.`
-            );
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailRegex.test(email)) {
+                if (feedback) {
+                    feedback.textContent = "Please provide a valid email address.";
+                    feedback.className = "form-feedback error";
+                }
+                showToast("Please provide a valid email address.", "error");
+                emailInput?.focus();
+                return;
+            }
+
+            const originalBtnText = submitBtn ? submitBtn.innerHTML : "Submit";
+            if (submitBtn) {
+                submitBtn.disabled = true;
+                submitBtn.innerHTML = "Sending message & confirmation... ⏳";
+            }
 
             if (feedback) {
-                feedback.textContent = "Preparing your inquiry email in your email app...";
-                feedback.className = "form-feedback success";
+                feedback.textContent = "Processing your message and sending confirmation email...";
+                feedback.className = "form-feedback info";
             }
-            showToast("Opening your email client to send your message...", "success");
 
-            setTimeout(() => {
-                window.location.href = `mailto:${foundationEmail}?subject=${emailSubject}&body=${emailBody}`;
-            }, 600);
+            try {
+                // Call Backend API
+                const response = await fetch("/api/contact", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({ fullName, email, subject, message })
+                });
+
+                const data = await response.json();
+
+                if (response.ok && data.success) {
+                    contactForm.reset();
+                    if (feedback) {
+                        feedback.textContent = `✓ ${data.message}`;
+                        feedback.className = "form-feedback success";
+                    }
+                    showToast("Message sent! A confirmation email has been dispatched to your inbox.", "success", 5000);
+                } else {
+                    throw new Error(data.error || "Submission failed");
+                }
+
+            } catch (err) {
+                console.warn("[Contact Form] Backend API unreachable, falling back to mailto client:", err.message);
+
+                if (feedback) {
+                    feedback.textContent = "Notice: Backend server is offline or unreachable. Opening your email app to prepare the message...";
+                    feedback.className = "form-feedback info";
+                }
+                showToast("Backend offline. Opening email app...", "info", 3500);
+
+                const foundationEmail = "info@awachfoundation.org";
+                const emailSubject = encodeURIComponent(`[Awach Foundation Inquiry] ${subject} - ${fullName}`);
+                const emailBody = encodeURIComponent(
+                    `Full Name: ${fullName}\nEmail Address: ${email}\nInquiry Type: ${subject}\n\nMessage:\n${message}\n\nSent via Awach Foundation Website.`
+                );
+
+                setTimeout(() => {
+                    window.location.href = `mailto:${foundationEmail}?subject=${emailSubject}&body=${emailBody}`;
+                }, 800);
+
+            } finally {
+                if (submitBtn) {
+                    submitBtn.disabled = false;
+                    submitBtn.innerHTML = originalBtnText;
+                }
+            }
         });
     }
 
