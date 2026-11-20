@@ -14,49 +14,61 @@
 
 <body>
 
-    <!-- HEADER -->
-    <header class="header">
-        <nav class="navbar">
+    <!-- TOP UTILITY / ANNOUNCEMENT BAR -->
+    <div class="top-bar">
+        <div class="top-bar-container">
+            <div class="top-bar-info">
+                <span class="top-bar-item">📍 Addis Ababa, Ethiopia</span>
+                <span class="top-bar-separator">|</span>
+                <a href="tel:+251118699000" class="top-bar-link">📞 +251 11 869 9000</a>
+                <span class="top-bar-separator">|</span>
+                <a href="mailto:info@awachfoundation.org" class="top-bar-link">✉️ info@awachfoundation.org</a>
+            </div>
+            <div class="top-bar-actions">
+                <span class="top-bar-tag">Empowering Communities</span>
+                <a href="pages/get-involved.html" class="top-bar-cta">Support Our Cause →</a>
+            </div>
+        </div>
+    </div>
 
-            <a href="index.html" class="logo">
-                AWACH
-                <span>FOUNDATION</span>
+    <!-- MAIN HEADER -->
+    <header class="site-header" id="siteHeader">
+        <div class="header-container">
+            <a href="index.html" class="logo" aria-label="Awach Foundation Home">
+                <span class="logo-mark">A</span>
+                <span class="logo-text">
+                    <span class="logo-name">AWACH</span>
+                    <span class="logo-sub">FOUNDATION</span>
+                </span>
             </a>
 
-            <button class="menu-btn" id="menuBtn"
-                    aria-label="Open navigation"
-                    aria-expanded="false">
-                ☰
-            </button>
+            <nav class="nav-links" id="navLinks" aria-label="Primary navigation">
+                <a href="index.html" class="nav-item active">Home</a>
+                <a href="pages/about.html" class="nav-item">About Us</a>
+                <a href="pages/programs.html" class="nav-item">Programs</a>
+                <a href="pages/projects.html" class="nav-item">Projects</a>
+                <a href="pages/news.html" class="nav-item">News & Events</a>
+                <a href="pages/gallery.html" class="nav-item">Gallery</a>
+                <a href="pages/resources.html" class="nav-item">Resources</a>
+                <a href="pages/get-involved.html" class="nav-item">Get Involved</a>
+                <a href="pages/contact.html" class="nav-item contact-link">Contact Us</a>
+            </nav>
 
-            <ul class="nav-links" id="navLinks">
-                <li><a href="index.html" class="active">Home</a></li>
+            <div class="header-actions">
+                <button class="action-btn search-btn" id="searchBtn" type="button" aria-label="Search website" title="Search website (Ctrl + K)">
+                    🔍
+                </button>
 
-                <li><a href="pages/about.html">About Us</a></li>
+                <button class="action-btn theme-toggle" id="themeToggle" type="button" aria-label="Switch to dark mode" title="Switch theme">
+                    <span id="themeIcon">🌙</span>
+                </button>
 
-                <li><a href="pages/programs.html">Programs</a></li>
-
-                <li><a href="pages/projects.html">Projects</a></li>
-
-                <li><a href="pages/news.html">News & Events</a></li>
-
-                <li><a href="pages/gallery.html">Gallery</a></li>
-
-                <li><a href="pages/resources.html">Resources</a></li>
-
-                <li><a href="pages/contact.html" class="contact-link">
-                    Contact Us
-                </a></li>
-            </ul>
-        <button class="menu-btn" id="menuBtn" aria-label="Toggle navigation" aria-expanded="false">☰</button>
-
-        <button class="theme-toggle" id="themeToggle" type="button"
-        aria-label="Switch to dark mode" title="Switch theme">
-    <span id="themeIcon">🌙</span>
-</button>
-
-        </nav>
-
+                <button class="menu-btn" id="menuBtn" type="button" aria-label="Toggle navigation menu" aria-expanded="false" aria-controls="navLinks">
+                    <span class="menu-icon-bars">☰</span>
+                </button>
+            </div>
+        </div>
+        <div class="scroll-progress-line" id="scrollProgressLine"></div>
     </header>
 
 
@@ -360,51 +372,154 @@
     </main>
 
 
+    <!-- GLOBAL SEARCH MODAL -->
+    <div class="search-modal" id="searchModal" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="globalSearchInput">
+        <div class="search-modal-backdrop" id="searchBackdrop"></div>
+        <div class="search-modal-dialog">
+            <div class="search-modal-header">
+                <div class="search-input-wrapper">
+                    <span class="search-input-icon">🔍</span>
+                    <input type="search" id="globalSearchInput" class="search-input" placeholder="Search programs, projects, news, resources..." autocomplete="off">
+                    <button type="button" class="search-clear-btn" id="searchClearBtn" aria-label="Clear search">✕</button>
+                </div>
+                <button type="button" class="search-close-btn" id="searchCloseBtn" aria-label="Close search">✕</button>
+            </div>
+            <div class="search-quick-tags">
+                <span class="quick-tag-label">Popular:</span>
+                <button type="button" class="quick-tag" data-tag="Youth">Youth Football</button>
+                <button type="button" class="quick-tag" data-tag="Education">Education</button>
+                <button type="button" class="quick-tag" data-tag="Community">Community</button>
+                <button type="button" class="quick-tag" data-tag="Volunteer">Volunteer</button>
+                <button type="button" class="quick-tag" data-tag="Gallery">Photos</button>
+            </div>
+            <div class="search-results-wrapper" id="searchResults">
+                <div class="search-initial-state">
+                    <p>Type keywords to search programs, initiatives, articles, and pages.</p>
+                    <small>Use shortcuts: <kbd>Ctrl + K</kbd> to search anywhere • <kbd>ESC</kbd> to close</small>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- TOAST NOTIFICATION CONTAINER -->
+    <div class="toast-container" id="toastContainer" aria-live="polite" aria-atomic="true"></div>
+
+    <!-- FLOATING BACK TO TOP -->
+    <button class="back-to-top" id="backToTop" type="button" aria-label="Scroll back to top" title="Back to top">
+        <span class="top-icon">↑</span>
+    </button>
+
     <!-- FOOTER -->
-    <footer class="footer">
+    <footer class="site-footer" id="siteFooter">
+        <div class="footer-main">
+            <div class="footer-container">
+                <!-- Column 1: Brand & Mission -->
+                <div class="footer-col footer-col-about">
+                    <a href="index.html" class="footer-logo">
+                        <span class="logo-mark">A</span>
+                        <span class="logo-text">
+                            <span class="logo-name">AWACH</span>
+                            <span class="logo-sub">FOUNDATION</span>
+                        </span>
+                    </a>
+                    <p class="footer-tagline">
+                        Empowering people and transforming communities through youth development, education, and sustainable social initiatives.
+                    </p>
+                    <div class="footer-socials">
+                        <span class="footer-social-label">Follow Us:</span>
+                        <div class="social-links">
+                            <a href="https://facebook.com" target="_blank" rel="noopener noreferrer" class="social-link" aria-label="Facebook">f</a>
+                            <a href="https://linkedin.com" target="_blank" rel="noopener noreferrer" class="social-link" aria-label="LinkedIn">in</a>
+                            <a href="https://telegram.org" target="_blank" rel="noopener noreferrer" class="social-link" aria-label="Telegram">✈</a>
+                            <a href="https://youtube.com" target="_blank" rel="noopener noreferrer" class="social-link" aria-label="YouTube">▶</a>
+                            <a href="https://x.com" target="_blank" rel="noopener noreferrer" class="social-link" aria-label="Twitter / X">𝕏</a>
+                        </div>
+                    </div>
+                </div>
 
-        <div class="footer-grid">
+                <!-- Column 2: Quick Links -->
+                <div class="footer-col footer-col-links">
+                    <h3 class="footer-heading">Quick Links</h3>
+                    <ul class="footer-nav">
+                        <li><a href="index.html">Home</a></li>
+                        <li><a href="pages/about.html">About Us</a></li>
+                        <li><a href="pages/programs.html">Our Programs</a></li>
+                        <li><a href="pages/projects.html">Projects</a></li>
+                        <li><a href="pages/news.html">News & Events</a></li>
+                        <li><a href="pages/gallery.html">Photo Gallery</a></li>
+                        <li><a href="pages/resources.html">Resources</a></li>
+                        <li><a href="pages/get-involved.html">Get Involved</a></li>
+                    </ul>
+                </div>
 
-            <div class="footer-about">
-                <h2>AWACH FOUNDATION</h2>
+                <!-- Column 3: Focus Areas -->
+                <div class="footer-col footer-col-focus">
+                    <h3 class="footer-heading">Our Focus Areas</h3>
+                    <ul class="footer-nav">
+                        <li><a href="pages/programs.html">Youth Development</a></li>
+                        <li><a href="pages/programs.html">Education & Learning</a></li>
+                        <li><a href="pages/programs.html">Community Empowerment</a></li>
+                        <li><a href="pages/programs.html">Sports & Recreation</a></li>
+                        <li><a href="pages/projects.html">Youth Football Project</a></li>
+                        <li><a href="pages/resources.html">Reports & Publications</a></li>
+                    </ul>
+                </div>
 
-                <p>
-                    Empowering people and transforming communities
-                    through meaningful initiatives and partnerships.
-                </p>
+                <!-- Column 4: Contact & Newsletter -->
+                <div class="footer-col footer-col-contact">
+                    <h3 class="footer-heading">Get in Touch</h3>
+                    <ul class="footer-contact-list">
+                        <li>
+                            <span class="contact-icon">📍</span>
+                            <span>Addis Ababa, Ethiopia</span>
+                        </li>
+                        <li>
+                            <span class="contact-icon">📞</span>
+                            <a href="tel:+251118699000" class="contact-copy-link" title="Click to call / copy">+251 11 869 9000</a>
+                        </li>
+                        <li>
+                            <span class="contact-icon">✉️</span>
+                            <a href="mailto:info@awachfoundation.org" class="contact-copy-link" title="Click to email / copy">info@awachfoundation.org</a>
+                        </li>
+                        <li>
+                            <span class="contact-icon">🕒</span>
+                            <span>Mon - Fri: 8:30 AM - 5:30 PM</span>
+                        </li>
+                    </ul>
+
+                    <div class="footer-newsletter">
+                        <h4>Subscribe to Newsletter</h4>
+                        <p>Receive updates on programs and community impact.</p>
+                        <form class="newsletter-form" id="newsletterForm" novalidate>
+                            <div class="newsletter-input-group">
+                                <input type="email" id="newsletterEmail" class="newsletter-input" placeholder="Your email address" required aria-label="Email address for newsletter">
+                                <button type="submit" class="newsletter-btn" aria-label="Subscribe to newsletter">Subscribe</button>
+                            </div>
+                            <p class="newsletter-feedback" id="newsletterFeedback" aria-live="polite"></p>
+                        </form>
+                    </div>
+                </div>
             </div>
-
-            <div>
-                <h3>Quick Links</h3>
-                <a href="index.html">Home</a>
-                <a href="pages/about.html">About Us</a>
-                <a href="pages/programs.html">Programs</a>
-                <a href="pages/projects.html">Projects</a>
-            </div>
-
-            <div>
-                <h3>Explore</h3>
-                <a href="pages/news.html">News & Events</a>
-                <a href="pages/gallery.html">Gallery</a>
-                <a href="pages/resources.html">Resources</a>
-                <a href="pages/get-involved.html">Get Involved</a>
-            </div>
-
-            <div>
-                <h3>Contact</h3>
-                <a href="pages/contact.html">Contact Us</a>
-                <p>More contact information coming soon.</p>
-            </div>
-
         </div>
 
+        <!-- Footer Bottom Bar -->
         <div class="footer-bottom">
-            <p>
-                &copy; <span id="year"></span> Awach Foundation.
-                All Rights Reserved.
-            </p>
+            <div class="footer-bottom-container">
+                <p class="footer-copyright">
+                    &copy; <span id="year"></span> Awach Foundation. All Rights Reserved.
+                </p>
+                <div class="footer-bottom-links">
+                    <a href="pages/about.html">Privacy Notice</a>
+                    <span class="separator">·</span>
+                    <a href="pages/about.html">Terms of Use</a>
+                    <span class="separator">·</span>
+                    <a href="pages/contact.html">Support</a>
+                </div>
+                <button type="button" class="footer-top-btn" id="footerTopBtn" aria-label="Back to top">
+                    Back to Top ↑
+                </button>
+            </div>
         </div>
-
     </footer>
 
     <script src="script.js"></script>
